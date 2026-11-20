@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormReady - Exam Form Document Assistant | Photo, Signature & PDF Tools</title>
+    <meta name="description" content="Resize exam photos to 20KB-50KB, add Name & Date strips, convert images to PDF, and compress existing PDFs to exact KB limits securely in your browser.">
+    <meta name="keywords" content="exam photo resizer 50kb, ssc photo signature resizer, add name and date on photo, compress pdf to 200kb, image to pdf under 200kb, upsc photo resizer">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Social Sharing Meta Tags -->
+    <meta property="og:title" content="FormReady - Exam Form Document Assistant">
+    <meta property="og:description" content="100% Private & Client-Side Photo Resizer (20KB-50KB), Name/Date Strip Generator, and Exact KB PDF Compressor for Exam Applications.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="FormReady">
+
+    <!-- Google AdSense Script Placeholder (Replace ca-pub-XXXXXXXXXXXXXXXX with your Publisher ID after approval) -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+
+    <!-- Structured Data: SoftwareApplication & FAQPage Schema for Google Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "FormReady - Exam Form Document Assistant",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "All",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+          },
+          "description": "Browser-based client-side utility to resize exam photos and signatures to exact KB limits, add Name and Date strips, and compress PDF documents offline."
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I resize a passport photo to 20KB–50KB for SSC or UPSC forms?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Select the 'Exact KB Photo / Sign' tool on FormReady, upload your JPG or PNG photo, click the 'SSC / UPSC Photo (45 KB)' preset, and click 'Compress & Resize Image'. Your resized image is generated locally in your browser."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Are my photos, signatures, and certificates uploaded to a server?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. FormReady runs 100% client-side inside your web browser using HTML5 Canvas and JavaScript. Your personal files never leave your phone or computer."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How can I add my Name and Date of Photo (DOP) to an exam photograph?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Open the 'Photo + Name & Date' tab, upload your passport photograph, enter your full name and the date the photo was taken, and download the formatted photo with a clean white bottom strip."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I compress an existing multi-page PDF under 200KB?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Go to the 'Compress Existing PDF' tab, upload your PDF document, enter 200 as your target KB limit, and click 'Compress PDF File'. The tool optimizes page resolution locally to fit under 200KB."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jsPDF for Client-Side PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- PDF.js for Client-Side PDF Rendering & Compression -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .tab-active { background-color: #2563eb; color: #ffffff; border-color: #2563eb; }
+        .tab-inactive { background-color: #ffffff; color: #475569; border-color: #e2e8f0; }
+        .tab-inactive:hover { background-color: #f1f5f9; }
+        .ad-slot-wrapper { min-height: 90px; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="?" onclick="event.preventDefault(); switchTab('resizer');" class="flex items-center gap-2.5">
+                <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                    F
+                </div>
+                <div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">FormReady</span>
+                    <span class="hidden sm:inline-block ml-2 text-xs font-medium bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                        100% Client-Side & Private
+                    </span>
+                </div>
+            </a>
+            <div class="text-xs sm:text-sm text-slate-500 font-medium">
+                No Server Upload • Instant Results
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
+        
+        <!-- Hero Intro -->
+        <div class="text-center mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                Exam Form Document Assistant
+            </h1>
+            <p class="mt-2 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
+                Resize photographs and signatures to exact KB limits, add Name & Date strips, and compress PDFs for competitive exams—completely offline inside your browser.
+            </p>
+        </div>
+
+        <!-- AD SLOT 1: Top Leaderboard Banner -->
+        <div class="ad-slot-wrapper my-6 bg-slate-100/80 border border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center p-3 text-center" aria-label="Advertisement">
+            <span class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mb-1">Advertisement</span>
+            <p class="text-xs text-slate-400">Responsive Display Ad Slot (728×90 / Mobile Banner)</p>
+            <!-- Paste Google AdSense <ins class="adsbygoogle"> unit code here -->
+        </div>
+
+        <!-- Privacy Trust Banner -->
+        <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-3.5 mb-6 flex items-center justify-center gap-2 text-xs sm:text-sm text-blue-800">
+            <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            <span><strong>Zero Privacy Risk:</strong> All files are processed locally on your device and never leave your browser.</span>
+        </div>
+
+        <!-- Tool Navigation Tabs (4 Tools Grid) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mb-6" role="tablist">
+            <button onclick="switchTab('resizer')" id="tab-resizer" class="tab-active py-3 px-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all shadow-sm flex items-center justify-center text-center">
+                <span>1. Exact KB Photo / Sign</span>
+            </button>
+            <button onclick="switchTab('namedate')" id="tab-namedate" class="tab-inactive py-3 px-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all flex items-center justify-center text-center">
+                <span>2. Photo + Name & Date</span>
+            </button>
+            <button onclick="switchTab('pdf')" id="tab-pdf" class="tab-inactive py-3 px-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all flex items-center justify-center text-center">
+                <span>3. Image to PDF (KB)</span>
+            </button>
+            <button onclick="switchTab('compresspdf')" id="tab-compresspdf" class="tab-inactive py-3 px-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all flex items-center justify-center text-center">
+                <span>4. Compress Existing PDF</span>
+            </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TOOL 1: EXACT KB PHOTO & SIGNATURE RESIZER -->
+        <!-- ========================================== -->
+        <section id="panel-resizer" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-8">
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Photo & Signature Exact KB Resizer</h2>
+                    <p class="text-sm text-slate-500">Select an exam preset or enter your custom target file size in KB.</p>
+                </div>
+                <button type="button" onclick="copyToolLink('resizer', this)" class="self-start sm:self-auto inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-slate-200 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <span>Copy Direct Link</span>
+                </button>
+            </div>
+
+            <!-- Presets -->
+            <div class="mb-5">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Quick Exam Presets</label>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="applyPreset(45, 350, 450, 'ssc-photo')" class="text-xs bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 font-medium px-3 py-1.5 rounded-lg border border-slate-200 transition">
+                        SSC / UPSC Photo (45 KB)
+                    </button>
+                    <button type="button" onclick="applyPreset(18, 300, 120, 'signature')" class="text-xs bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 font-medium px-3 py-1.5 rounded-lg border border-slate-200 transition">
+                        Signature (10–20 KB)
+                    </button>
+                    <button type="button" onclick="applyPreset(95, 600, 800, 'resizer')" class="text-xs bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 font-medium px-3 py-1.5 rounded-lg border border-slate-200 transition">
+                        High-Res Photo (100 KB)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Box -->
+            <div class="mb-6">
+                <label for="resizer-input" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100/80 transition">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+                        <svg class="w-8 h-8 mb-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                        <p class="text-sm font-medium text-slate-700" id="resizer-filename">Click to upload Photo or Signature (JPG, PNG)</p>
+                        <p class="text-xs text-slate-400 mt-1" id="resizer-orig-size">Supports any image resolution</p>
+                    </div>
+                    <input id="resizer-input" type="file" accept="image/*" class="hidden" onchange="handleResizerUpload(event)" />
+                </label>
+            </div>
+
+            <!-- Controls -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Target Max Size (KB)</label>
+                    <input type="number" id="target-kb" value="45" min="5" max="2000" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Width (px) — Optional</label>
+                    <input type="number" id="target-width" placeholder="Auto" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Height (px) — Optional</label>
+                    <input type="number" id="target-height" placeholder="Auto" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                </div>
+            </div>
+
+            <button onclick="processExactKB()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition">
+                Compress & Resize Image
+            </button>
+
+            <!-- Output Preview -->
+            <div id="resizer-output" class="hidden mt-6 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                    <img id="resizer-preview-img" class="w-24 h-24 object-contain bg-slate-100 rounded-lg border border-slate-200 p-1" alt="Preview">
+                    <div>
+                        <span class="inline-block text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full mb-1">Ready to Download</span>
+                        <p class="text-sm font-bold text-slate-900" id="resizer-final-stats">Final Size: -- KB</p>
+                        <p class="text-xs text-slate-500" id="resizer-final-dims">Dimensions: -- x -- px</p>
+                    </div>
+                </div>
+                <a id="resizer-download-btn" download="formready-photo.jpg" class="w-full sm:w-auto text-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-6 rounded-xl shadow-sm transition cursor-pointer">
+                    Download Image
+                </a>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TOOL 2: PHOTO + NAME & DATE GENERATOR      -->
+        <!-- ========================================== -->
+        <section id="panel-namedate" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-8">
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Photo + Name & Date Strip Generator</h2>
+                    <p class="text-sm text-slate-500">Add a clean white strip containing your Full Name and Date of Photo (DOP) at the bottom of your passport photograph.</p>
+                </div>
+                <button type="button" onclick="copyToolLink('namedate', this)" class="self-start sm:self-auto inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-slate-200 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <span>Copy Direct Link</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Inputs -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">1. Upload Passport Photo</label>
+                        <input type="file" id="nd-input" accept="image/*" onchange="renderNameDateCanvas()" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-slate-200 rounded-lg p-1.5">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">2. Candidate Full Name (Capital Letters Recommended)</label>
+                        <input type="text" id="nd-name" placeholder="e.g. RAHUL SHARMA" oninput="renderNameDateCanvas()" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm uppercase focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">3. Date of Photo (DOP)</label>
+                        <input type="text" id="nd-date" placeholder="e.g. 20-11-2026" oninput="renderNameDateCanvas()" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-1">
+                        <input type="checkbox" id="nd-dop-prefix" checked onchange="renderNameDateCanvas()" class="rounded text-blue-600 focus:ring-blue-500">
+                        <label for="nd-dop-prefix" class="text-xs text-slate-600">Include "DOP:" prefix before the date</label>
+                    </div>
+
+                    <button onclick="downloadNameDate()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition mt-2">
+                        Download Photo with Name & Date
+                    </button>
+                </div>
+
+                <!-- Live Canvas Preview -->
+                <div class="flex flex-col items-center justify-center bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Live Preview</span>
+                    <canvas id="nd-canvas" width="350" height="450" class="max-w-full h-auto max-h-72 border border-slate-300 bg-white shadow-sm"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TOOL 3: IMAGE TO PDF & EXACT KB COMPRESSOR -->
+        <!-- ========================================== -->
+        <section id="panel-pdf" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-8">
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Document Image to Exact KB PDF</h2>
+                    <p class="text-sm text-slate-500">Convert marksheets, ID proofs, or certificates into a single A4 PDF optimized under your required KB limit.</p>
+                </div>
+                <button type="button" onclick="copyToolLink('pdf', this)" class="self-start sm:self-auto inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-slate-200 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <span>Copy Direct Link</span>
+                </button>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Select Document Images (Select one or multiple pages)</label>
+                    <input type="file" id="pdf-images-input" accept="image/*" multiple class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-slate-200 rounded-xl p-2">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Target Max PDF Size (KB)</label>
+                        <input type="number" id="pdf-target-kb" value="200" min="30" max="5000" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Common Portal Limits</label>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="document.getElementById('pdf-target-kb').value=100" class="flex-1 text-xs bg-slate-100 hover:bg-slate-200 py-2 rounded-lg font-medium">100 KB</button>
+                            <button type="button" onclick="document.getElementById('pdf-target-kb').value=200" class="flex-1 text-xs bg-slate-100 hover:bg-slate-200 py-2 rounded-lg font-medium">200 KB</button>
+                            <button type="button" onclick="document.getElementById('pdf-target-kb').value=500" class="flex-1 text-xs bg-slate-100 hover:bg-slate-200 py-2 rounded-lg font-medium">500 KB</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="generateCompressedPDF()" id="pdf-generate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition">
+                    Create & Compress PDF
+                </button>
+
+                <!-- PDF Result -->
+                <div id="pdf-output" class="hidden pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-emerald-50/60 p-4 rounded-xl border border-emerald-200">
+                    <div>
+                        <p class="text-sm font-bold text-emerald-900" id="pdf-status-text">PDF Ready (Size: -- KB)</p>
+                        <p class="text-xs text-emerald-700">Standard A4 Format • Optimized for Application Portals</p>
+                    </div>
+                    <a id="pdf-download-btn" download="formready-document.pdf" class="w-full sm:w-auto text-center bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2 px-5 rounded-lg shadow-sm transition cursor-pointer">
+                        Download PDF
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TOOL 4: EXISTING PDF TO SMALLER PDF (KB)   -->
+        <!-- ========================================== -->
+        <section id="panel-compresspdf" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-8">
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Compress Existing PDF to Exact KB</h2>
+                    <p class="text-sm text-slate-500">Upload an existing multi-page PDF certificate or document to reduce its file size under your portal's KB limit.</p>
+                </div>
+                <button type="button" onclick="copyToolLink('compresspdf', this)" class="self-start sm:self-auto inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-slate-200 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <span>Copy Direct Link</span>
+                </button>
+            </div>
+
+            <div class="space-y-5">
+                <!-- PDF Upload Box -->
+                <div>
+                    <label for="existing-pdf-input" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100/80 transition">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+                            <svg class="w-8 h-8 mb-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <p class="text-sm font-medium text-slate-700" id="existing-pdf-filename">Click to upload an existing PDF file</p>
+                            <p class="text-xs text-slate-400 mt-1" id="existing-pdf-orig-size">100% private browser-based PDF compression</p>
+                        </div>
+                        <input id="existing-pdf-input" type="file" accept="application/pdf" class="hidden" onchange="handleExistingPdfSelect(event)" />
+                    </label>
+                </div>
+
+                <!-- Target Size Controls -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Target Max PDF Size (KB)</label>
+                        <input type="number" id="compress-pdf-target-kb" value="200" min="30" max="10000" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Common Portal Limits</label>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="document.getElementById('compress-pdf-target-kb').value=100" class="flex-1 text-xs bg-slate-100 hover:bg-slate-200 py-2 rounded-lg font-medium">100 KB</button>
+                            <button type="button" onclick="document.getElementById('compress-pdf-target-kb').value=200" class="flex-1 text-xs bg-slate-100 hover:bg-slate-200 py-2 rounded-lg font-medium">200 KB</button>
+                            <button type="button" onclick="document.getElementById('compress-pdf-target-kb').value=500" class="flex-1 text-xs bg-slate-100 hover:bg-slate-200 py-2 rounded-lg font-medium">500 KB</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="compressExistingPDF()" id="compress-pdf-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition">
+                    Compress PDF File
+                </button>
+
+                <!-- Compression Progress Info -->
+                <p id="compress-pdf-progress" class="hidden text-xs text-center text-blue-600 font-medium animate-pulse">
+                    Reading pages and optimizing PDF size...
+                </p>
+
+                <!-- Compressed PDF Result -->
+                <div id="compress-pdf-output" class="hidden pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-emerald-50/60 p-4 rounded-xl border border-emerald-200">
+                    <div>
+                        <p class="text-sm font-bold text-emerald-900" id="compress-pdf-status">Compressed PDF Ready! (Size: -- KB)</p>
+                        <p class="text-xs text-emerald-700" id="compress-pdf-reduction">Reduced by --% • Ready for Portal Upload</p>
+                    </div>
+                    <a id="compress-pdf-download-btn" download="formready-compressed.pdf" class="w-full sm:w-auto text-center bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2 px-5 rounded-lg shadow-sm transition cursor-pointer">
+                        Download Compressed PDF
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- AD SLOT 2: Mid-Content Multiplex / Display Ad -->
+        <div class="ad-slot-wrapper my-8 bg-slate-100/80 border border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center p-4 text-center" aria-label="Advertisement">
+            <span class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mb-1">Advertisement</span>
+            <p class="text-xs text-slate-400">In-Article / Multiplex Ad Slot (High Viewability & Policy Safe)</p>
+            <!-- Paste Google AdSense <ins class="adsbygoogle"> unit code here -->
+        </div>
+
+        <!-- SEO Helpful Info & Visible FAQ Section -->
+        <section class="mt-8 bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 text-sm text-slate-600 space-y-6">
+            <div>
+                <h2 class="font-bold text-slate-900 text-lg mb-3">Standard Document Specifications for Competitive Exam Applications</h2>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>SSC (CGL, CHSL, GD, MTS):</strong> Recent passport photograph must be between 20 KB and 50 KB (JPG/JPEG), and signature between 10 KB and 20 KB.</li>
+                    <li><strong>UPSC & State PSC Portals:</strong> Clear photograph and signature on a plain light background, typically required between 20 KB and 300 KB.</li>
+                    <li><strong>Academic & Category Certificates:</strong> Marksheets, caste certificates, and domicile documents are generally uploaded in PDF format under 100 KB to 500 KB.</li>
+                </ul>
+            </div>
+
+            <div class="pt-6 border-t border-slate-200">
+                <h2 class="font-bold text-slate-900 text-lg mb-4">Frequently Asked Questions (FAQ)</h2>
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="font-semibold text-slate-800">How do I resize a passport photo to 20KB–50KB for SSC or UPSC forms?</h3>
+                        <p class="mt-1 text-slate-600">Select the <strong>Exact KB Photo / Sign</strong> tool, upload your JPG or PNG photo, click the <strong>SSC / UPSC Photo (45 KB)</strong> preset, and press <strong>Compress & Resize Image</strong>. Your resized image is processed instantly inside your browser.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-slate-800">Are my photos, signatures, and certificates uploaded to a server?</h3>
+                        <p class="mt-1 text-slate-600">No. FormReady runs 100% client-side using HTML5 Canvas and JavaScript. Your personal documents never leave your device.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-slate-800">How can I add my Name and Date of Photo (DOP) to an exam photograph?</h3>
+                        <p class="mt-1 text-slate-600">Open the <strong>Photo + Name & Date</strong> tab, upload your passport photograph, enter your full name and date of photo, and download the formatted image with a clean white bottom strip.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-slate-800">How do I compress an existing multi-page PDF under 200KB?</h3>
+                        <p class="mt-1 text-slate-600">Go to the <strong>Compress Existing PDF</strong> tab, upload your PDF file, set 200 KB as the target limit, and click <strong>Compress PDF File</strong>.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12">
+        <div class="max-w-5xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+            <p>© 2026 FormReady — Exam Form Document Assistant. All rights reserved.</p>
+            <div class="flex gap-5 font-medium">
+                <button onclick="openLegalModal('privacy')" class="hover:text-blue-600 transition">Privacy Policy</button>
+                <button onclick="openLegalModal('terms')" class="hover:text-blue-600 transition">Terms of Use</button>
+                <button onclick="openLegalModal('contact')" class="hover:text-blue-600 transition">Contact</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Clean Legal Modal (Privacy Policy, Terms, Contact) -->
+    <div id="legal-modal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <h3 id="legal-modal-title" class="text-lg font-bold text-slate-900">Privacy Policy</h3>
+                <button onclick="closeLegalModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold leading-none">&times;</button>
+            </div>
+            <div id="legal-modal-body" class="py-4 text-sm text-slate-600 space-y-3 overflow-y-auto leading-relaxed">
+                <!-- Dynamic content injected here -->
+            </div>
+            <div class="pt-3 border-t border-slate-200 flex justify-end">
+                <button onclick="closeLegalModal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-5 py-2 rounded-lg transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CORE CLIENT-SIDE JAVASCRIPT LOGIC          -->
+    <!-- ========================================== -->
+    <script>
+        // Configure PDF.js Worker
+        if (window.pdfjsLib) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        // --- LEGAL MODAL CONTENT ---
+        const legalContent = {
+            privacy: {
+                title: "Privacy Policy",
+                html: `
+                    <p><strong>Effective Date:</strong> November 2026</p>
+                    <p>At <strong>FormReady (Exam Form Document Assistant)</strong>, your privacy is our highest priority. Unlike traditional online document converters, FormReady operates entirely on client-side browser technology.</p>
+                    <p><strong>1. Zero File Uploads:</strong> All photographs, signatures, and PDF documents you select are processed locally within your device's web browser using HTML5 Canvas and JavaScript. Your files are never uploaded, transmitted, or stored on any external server.</p>
+                    <p><strong>2. Data Collection & Advertising:</strong> We do not collect personal identification documents or user files. Third-party vendors, including Google AdSense, use cookies to serve ads based on a user's prior visits to this website or other websites. Users may opt out of personalized advertising by visiting Google Ads Settings.</p>
+                    <p><strong>3. Security:</strong> Because your documents never leave your device, there is zero risk of server-side data breaches or unauthorized access to your personal records.</p>
+                `
+            },
+            terms: {
+                title: "Terms of Use",
+                html: `
+                    <p><strong>1. Acceptance of Terms:</strong> By accessing and using FormReady, you agree to comply with these Terms of Use. All tools on this platform are provided free of charge for personal and educational application purposes.</p>
+                    <p><strong>2. User Responsibility:</strong> Examination boards (such as SSC, UPSC, IBPS, and State Commissions) frequently update their official guidelines. While our presets follow standard dimensions, you are responsible for verifying that your final downloaded image or PDF meets the exact specifications stated in your official exam notification before submission.</p>
+                    <p><strong>3. Disclaimer of Warranties:</strong> FormReady is provided on an "as-is" and "as-available" basis without warranties of any kind. We are not liable for rejected applications resulting from incorrect user inputs or altered portal requirements.</p>
+                `
+            },
+            contact: {
+                title: "Contact & Support",
+                html: `
+                    <p>Have feedback, feature requests, or need to report a bug on <strong>FormReady</strong>?</p>
+                    <p>We are continuously adding new exam presets and document utilities to help applicants save time.</p>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-1">
+                        <p><strong>Support Email:</strong> support@formready.in</p>
+                        <p><strong>Response Time:</strong> Within 24–48 business hours</p>
+                    </div>
+                `
+            }
+        };
+
+        function openLegalModal(type) {
+            const data = legalContent[type];
+            if (!data) return;
+            document.getElementById('legal-modal-title').textContent = data.title;
+            document.getElementById('legal-modal-body').innerHTML = data.html;
+            document.getElementById('legal-modal').classList.remove('hidden');
+        }
+
+        function closeLegalModal() {
+            document.getElementById('legal-modal').classList.add('hidden');
+        }
+
+        // --- URL QUERY PARAMETER ROUTING & TAB SWITCHING ---
+        const toolTitles = {
+            resizer: "Exact KB Photo & Signature Resizer | FormReady",
+            "ssc-photo": "SSC & UPSC Photo Resizer (20KB–50KB) | FormReady",
+            signature: "Exam Signature Resizer (10KB–20KB) | FormReady",
+            namedate: "Photo with Name & Date (DOP) Generator | FormReady",
+            pdf: "Image to Exact KB PDF Converter | FormReady",
+            compresspdf: "Compress Existing PDF to Exact KB | FormReady"
+        };
+
+        function updateURLParam(paramValue) {
+            try {
+                const url = new URL(window.location);
+                url.searchParams.set('tool', paramValue);
+                window.history.replaceState({}, '', url);
+            } catch (e) {
+                // Fallback if opened via local file:// protocol
+            }
+            if (toolTitles[paramValue]) {
+                document.title = toolTitles[paramValue];
+            }
+        }
+
+        function copyToolLink(paramValue, btnElement) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('tool', paramValue);
+            const shareUrl = url.toString();
+
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                const label = btnElement.querySelector('span');
+                const origText = label.textContent;
+                label.textContent = 'Link Copied!';
+                btnElement.classList.add('text-emerald-700', 'bg-emerald-50', 'border-emerald-200');
+                setTimeout(() => {
+                    label.textContent = origText;
+                    btnElement.classList.remove('text-emerald-700', 'bg-emerald-50', 'border-emerald-200');
+                }, 2000);
+            }).catch(() => {
+                prompt("Copy this direct tool link:", shareUrl);
+            });
+        }
+
+        function switchTab(tabName, skipUrlUpdate = false) {
+            const tabs = ['resizer', 'namedate', 'pdf', 'compresspdf'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('tab-' + t);
+                const panel = document.getElementById('panel-' + t);
+                if (t === tabName) {
+                    btn.className = 'tab-active py-3 px-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all shadow-sm flex items-center justify-center text-center';
+                    panel.classList.remove('hidden');
+                } else {
+                    btn.className = 'tab-inactive py-3 px-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all flex items-center justify-center text-center';
+                    panel.classList.add('hidden');
+                }
+            });
+            if (!skipUrlUpdate) {
+                updateURLParam(tabName);
+            }
+        }
+
+        // Read ?tool=... on initial page load
+        function initRouteFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const toolParam = (params.get('tool') || '').toLowerCase();
+
+            if (toolParam === 'ssc-photo') {
+                switchTab('resizer', true);
+                applyPreset(45, 350, 450, 'ssc-photo');
+            } else if (toolParam === 'signature') {
+                switchTab('resizer', true);
+                applyPreset(18, 300, 120, 'signature');
+            } else if (['resizer', 'namedate', 'pdf', 'compresspdf'].includes(toolParam)) {
+                switchTab(toolParam, true);
+                updateURLParam(toolParam);
+            }
+        }
+
+        // --- TOOL 1: EXACT KB RESIZER LOGIC ---
+        let resizerImageObj = null;
+
+        function applyPreset(kb, width, height, presetSlug = 'resizer') {
+            document.getElementById('target-kb').value = kb;
+            document.getElementById('target-width').value = width;
+            document.getElementById('target-height').value = height;
+            updateURLParam(presetSlug);
+            if (resizerImageObj) processExactKB();
+        }
+
+        function handleResizerUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('resizer-filename').textContent = file.name;
+            document.getElementById('resizer-orig-size').textContent = `Original Size: ${(file.size / 1024).toFixed(1)} KB`;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    resizerImageObj = img;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function processExactKB() {
+            if (!resizerImageObj) {
+                alert('Please upload a photograph or signature first.');
+                return;
+            }
+
+            const targetKB = parseFloat(document.getElementById('target-kb').value) || 45;
+            const targetBytes = targetKB * 1024;
+            let width = parseInt(document.getElementById('target-width').value) || resizerImageObj.width;
+            let height = parseInt(document.getElementById('target-height').value) || resizerImageObj.height;
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            let minQ = 0.05, maxQ = 0.98, bestDataUrl = null, bestSize = 0;
+            let scale = 1.0;
+
+            for (let attempt = 0; attempt < 4; attempt++) {
+                canvas.width = Math.round(width * scale);
+                canvas.height = Math.round(height * scale);
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(resizerImageObj, 0, 0, canvas.width, canvas.height);
+
+                minQ = 0.05;
+                maxQ = 0.98;
+
+                for (let i = 0; i < 8; i++) {
+                    const midQ = (minQ + maxQ) / 2;
+                    const dataUrl = canvas.toDataURL('image/jpeg', midQ);
+                    const sizeBytes = Math.round((dataUrl.length - 'data:image/jpeg;base64,'.length) * 3 / 4);
+
+                    if (sizeBytes <= targetBytes) {
+                        bestDataUrl = dataUrl;
+                        bestSize = sizeBytes;
+                        minQ = midQ;
+                    } else {
+                        maxQ = midQ;
+                    }
+                }
+
+                if (bestDataUrl) break;
+                scale *= 0.75;
+            }
+
+            if (!bestDataUrl) {
+                bestDataUrl = canvas.toDataURL('image/jpeg', 0.05);
+                bestSize = Math.round((bestDataUrl.length - 'data:image/jpeg;base64,'.length) * 3 / 4);
+            }
+
+            document.getElementById('resizer-preview-img').src = bestDataUrl;
+            document.getElementById('resizer-final-stats').textContent = `Final Size: ${(bestSize / 1024).toFixed(1)} KB (Target: ≤ ${targetKB} KB)`;
+            document.getElementById('resizer-final-dims').textContent = `Dimensions: ${canvas.width} × ${canvas.height} px`;
+            document.getElementById('resizer-download-btn').href = bestDataUrl;
+            document.getElementById('resizer-output').classList.remove('hidden');
+        }
+
+        // --- TOOL 2: PHOTO + NAME & DATE LOGIC ---
+        let ndImageObj = null;
+
+        document.getElementById('nd-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const img = new Image();
+                img.onload = function() {
+                    ndImageObj = img;
+                    renderNameDateCanvas();
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function renderNameDateCanvas() {
+            const canvas = document.getElementById('nd-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const stripHeight = 85;
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, w, h);
+
+            if (ndImageObj) {
+                ctx.drawImage(ndImageObj, 0, 0, w, h - stripHeight);
+            } else {
+                ctx.fillStyle = '#f1f5f9';
+                ctx.fillRect(0, 0, w, h - stripHeight);
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = 'bold 16px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Upload Photo to Preview', w / 2, (h - stripHeight) / 2);
+            }
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, h - stripHeight, w, stripHeight);
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, h - stripHeight);
+            ctx.lineTo(w, h - stripHeight);
+            ctx.stroke();
+
+            const nameText = (document.getElementById('nd-name').value || 'YOUR FULL NAME').toUpperCase();
+            const rawDate = document.getElementById('nd-date').value || 'DD-MM-YYYY';
+            const usePrefix = document.getElementById('nd-dop-prefix').checked;
+            const dateText = usePrefix ? `DOP: ${rawDate}` : rawDate;
+
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 20px Arial, sans-serif';
+            ctx.fillText(nameText, w / 2, h - 50, w - 20);
+
+            ctx.font = 'bold 18px Arial, sans-serif';
+            ctx.fillText(dateText, w / 2, h - 20, w - 20);
+        }
+
+        renderNameDateCanvas();
+
+        function downloadNameDate() {
+            if (!ndImageObj) {
+                alert('Please upload a passport photograph first.');
+                return;
+            }
+            const canvas = document.getElementById('nd-canvas');
+            const link = document.createElement('a');
+            link.download = 'formready-photo-name-date.jpg';
+            link.href = canvas.toDataURL('image/jpeg', 0.92);
+            link.click();
+        }
+
+        // --- TOOL 3: IMAGE TO EXACT KB PDF LOGIC ---
+        async function generateCompressedPDF() {
+            const input = document.getElementById('pdf-images-input');
+            if (!input.files || input.files.length === 0) {
+                alert('Please select at least one document image.');
+                return;
+            }
+
+            const btn = document.getElementById('pdf-generate-btn');
+            btn.textContent = 'Compressing PDF...';
+            btn.disabled = true;
+
+            const targetKB = parseFloat(document.getElementById('pdf-target-kb').value) || 200;
+            const targetBytes = targetKB * 1024;
+            const files = Array.from(input.files);
+
+            const images = await Promise.all(files.map(file => new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            })));
+
+            const { jsPDF } = window.jspdf;
+            let bestBlob = null;
+            let quality = 0.85;
+            let maxWidth = 1400;
+
+            for (let step = 0; step < 8; step++) {
+                const doc = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+
+                images.forEach((img, idx) => {
+                    if (idx > 0) doc.addPage();
+
+                    const canvas = document.createElement('canvas');
+                    const scale = Math.min(1, maxWidth / img.width);
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    const imgData = canvas.toDataURL('image/jpeg', quality);
+
+                    const margin = 10;
+                    const availW = pageWidth - margin * 2;
+                    const availH = pageHeight - margin * 2;
+                    const ratio = Math.min(availW / canvas.width, availH / canvas.height);
+                    const finalW = canvas.width * ratio;
+                    const finalH = canvas.height * ratio;
+                    const x = (pageWidth - finalW) / 2;
+                    const y = (pageHeight - finalH) / 2;
+
+                    doc.addImage(imgData, 'JPEG', x, y, finalW, finalH);
+                });
+
+                const blob = doc.output('blob');
+                bestBlob = blob;
+
+                if (blob.size <= targetBytes) {
+                    break;
+                }
+
+                quality = Math.max(0.15, quality - 0.12);
+                maxWidth = Math.max(600, Math.round(maxWidth * 0.82));
+            }
+
+            const url = URL.createObjectURL(bestBlob);
+            const downloadBtn = document.getElementById('pdf-download-btn');
+            downloadBtn.href = url;
+
+            document.getElementById('pdf-status-text').textContent = `PDF Ready! Final Size: ${(bestBlob.size / 1024).toFixed(1)} KB`;
+            document.getElementById('pdf-output').classList.remove('hidden');
+
+            btn.textContent = 'Create & Compress PDF';
+            btn.disabled = false;
+        }
+
+        // --- TOOL 4: EXISTING PDF COMPRESSOR LOGIC ---
+        let selectedExistingPdfFile = null;
+
+        function handleExistingPdfSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            selectedExistingPdfFile = file;
+            document.getElementById('existing-pdf-filename').textContent = file.name;
+            document.getElementById('existing-pdf-orig-size').textContent = `Original Size: ${(file.size / 1024).toFixed(1)} KB`;
+            document.getElementById('compress-pdf-output').classList.add('hidden');
+        }
+
+        async function compressExistingPDF() {
+            if (!selectedExistingPdfFile) {
+                alert('Please upload an existing PDF file first.');
+                return;
+            }
+
+            const btn = document.getElementById('compress-pdf-btn');
+            const progressText = document.getElementById('compress-pdf-progress');
+            btn.disabled = true;
+            btn.textContent = 'Compressing PDF...';
+            progressText.classList.remove('hidden');
+
+            try {
+                const targetKB = parseFloat(document.getElementById('compress-pdf-target-kb').value) || 200;
+                const targetBytes = targetKB * 1024;
+                const arrayBuffer = await selectedExistingPdfFile.arrayBuffer();
+
+                const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const numPages = pdfDoc.numPages;
+
+                const pageCanvases = [];
+                for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                    progressText.textContent = `Rendering page ${pageNum} of ${numPages}...`;
+                    const page = await pdfDoc.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 1.8 });
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                    pageCanvases.push(canvas);
+                }
+
+                progressText.textContent = 'Optimizing compression to hit target KB...';
+
+                const { jsPDF } = window.jspdf;
+                let bestBlob = null;
+                let quality = 0.80;
+                let scaleFactor = 1.0;
+
+                for (let step = 0; step < 9; step++) {
+                    let doc = null;
+
+                    pageCanvases.forEach((srcCanvas, idx) => {
+                        const w = Math.max(300, Math.round(srcCanvas.width * scaleFactor));
+                        const h = Math.max(400, Math.round(srcCanvas.height * scaleFactor));
+                        const orientation = w > h ? 'l' : 'p';
+
+                        if (idx === 0) {
+                            doc = new jsPDF(orientation, 'pt', [w, h]);
+                        } else {
+                            doc.addPage([w, h], orientation);
+                        }
+
+                        const tmpCanvas = document.createElement('canvas');
+                        tmpCanvas.width = w;
+                        tmpCanvas.height = h;
+                        const tmpCtx = tmpCanvas.getContext('2d');
+                        tmpCtx.fillStyle = '#FFFFFF';
+                        tmpCtx.fillRect(0, 0, w, h);
+                        tmpCtx.drawImage(srcCanvas, 0, 0, w, h);
+
+                        const imgData = tmpCanvas.toDataURL('image/jpeg', quality);
+                        doc.addImage(imgData, 'JPEG', 0, 0, w, h);
+                    });
+
+                    const blob = doc.output('blob');
+                    bestBlob = blob;
+
+                    if (blob.size <= targetBytes) {
+                        break;
+                    }
+
+                    quality = Math.max(0.15, quality - 0.11);
+                    scaleFactor = Math.max(0.35, scaleFactor * 0.85);
+                }
+
+                const origKB = selectedExistingPdfFile.size / 1024;
+                const finalKB = bestBlob.size / 1024;
+                const savedPercent = Math.max(0, Math.round(((origKB - finalKB) / origKB) * 100));
+
+                const url = URL.createObjectURL(bestBlob);
+                const downloadBtn = document.getElementById('compress-pdf-download-btn');
+                downloadBtn.href = url;
+                downloadBtn.download = 'compressed-' + selectedExistingPdfFile.name;
+
+                document.getElementById('compress-pdf-status').textContent = `Compressed PDF Ready! Final Size: ${finalKB.toFixed(1)} KB`;
+                document.getElementById('compress-pdf-reduction').textContent = `Original: ${origKB.toFixed(1)} KB • Saved ${savedPercent}%`;
+                document.getElementById('compress-pdf-output').classList.remove('hidden');
+
+            } catch (err) {
+                console.error(err);
+                alert('Unable to compress this PDF. Please ensure the file is not password-protected.');
+            } finally {
+                progressText.classList.add('hidden');
+                btn.disabled = false;
+                btn.textContent = 'Compress PDF File';
+            }
+        }
+
+        // Initialize active tab/preset from URL parameters on page load
+        initRouteFromURL();
+    </script>
+</body>
+</html>
