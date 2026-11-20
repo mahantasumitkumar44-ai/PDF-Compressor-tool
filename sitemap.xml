@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Homepage -->
+  <url>
+    <loc>https://yourdomain.in/</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Tool 1: Exact KB Photo & Signature Resizer -->
+  <url>
+    <loc>https://yourdomain.in/?tool=resizer</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Preset: SSC / UPSC Photo Resizer (20KB - 50KB) -->
+  <url>
+    <loc>https://yourdomain.in/?tool=ssc-photo</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Preset: Exam Signature Resizer (10KB - 20KB) -->
+  <url>
+    <loc>https://yourdomain.in/?tool=signature</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Tool 2: Photo + Name & Date (DOP) Generator -->
+  <url>
+    <loc>https://yourdomain.in/?tool=namedate</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Tool 3: Image to Exact KB PDF Converter -->
+  <url>
+    <loc>https://yourdomain.in/?tool=pdf</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Tool 4: Compress Existing PDF to Exact KB -->
+  <url>
+    <loc>https://yourdomain.in/?tool=compresspdf</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>
