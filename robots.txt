@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mahantasumitkumar44-ai.github.io/PDF-Compressor-tool/sitemap.xml
